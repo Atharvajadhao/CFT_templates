@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This is a CFT template to launch an EC2 instance
+Resources:
+  KeyPair-CFT: #creating key-pair resource
+    Type: AWS::EC2:KeyPair
+    Properties: #properties of the key-pair
+      KeyFormat: ppk
+      KeyName: KeyPair-CFT
+  tempInstance: #name of the resource
+    Type: AWS::EC2:Instance #give the type of the resource, here we have given EC2-Instance
+    Properties: #now give the properties
+      ImageId: ami-0e83be366243f524a
+      InstanceType: t2.micro
+      KeyName: 
+        Ref: KeyPair-CFT
+      SubnetId: subnet-028cc28001feb5aab
+      NetworkInterfaces: 
+        AssociatePublicIpAddress: true
+        SubnetId: subnet-028cc28001feb5aab
+      BlockDeviceMapping:
+        -DeviceName: /dev/sdm
+        Ebs:
+          VolumeType: i01
+          Iops: 200
+          DeleteOnTermination: true
+          VolumeSize: 8
+
