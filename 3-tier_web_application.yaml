@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This CF template consist of the infrastructure of a 3-tier web application
+
+Resources:
+  #making vpc
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 192.168.0.0/16
+      Tags:
+        - Key: Name
+          Value: my-vpc-01
+
+  
+Outputs:
+  myVPCId:
+    Description: Id of the VPC created
+    Value:
+      Ref: myVPC
+
+  
