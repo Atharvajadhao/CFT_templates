@@ -10,6 +10,42 @@ Resources:
       Tags:
         - Key: Name
           Value: my-vpc-01
+  
+  #creating public subnet
+  myPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: 
+        Ref: myVPC
+      CidrBlock: 192.168.0.0/24
+      AvailabilityZone: us-east-2a
+      Tags:
+        - Key: Name
+          Value: my-public-subnet-1
+  
+  #creating private subnet - 1
+  myPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: 192.168.1.0/24
+      AvailabilityZone: us-east-2b
+      Tags:
+        - Key: Name
+          Value: my-private-subnet-1
+  
+  #creating private subnet - 2
+  myPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: 192.168.2.0/24
+      AvailabilityZone: us-east-2c
+      Tags:
+        - Key: Name
+          Value: my-private-subnet-2
 
   
 Outputs:
@@ -17,5 +53,11 @@ Outputs:
     Description: Id of the VPC created
     Value:
       Ref: myVPC
-
   
+  myPublicSubnet1Id:
+    Description: Id of the my-public-subnet-1
+    Value:
+      Ref: myPublicSubnet1
+
+
+
