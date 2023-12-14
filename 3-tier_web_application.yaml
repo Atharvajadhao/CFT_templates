@@ -46,6 +46,14 @@ Resources:
       Tags:
         - Key: Name
           Value: my-private-subnet-2
+  
+  #creating Internet Gateway
+  myIG1:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: my-IG-1
 
   
 Outputs:
@@ -58,6 +66,14 @@ Outputs:
     Description: Id of the my-public-subnet-1
     Value:
       Ref: myPublicSubnet1
+  myPrivateSubnet1Id:
+    Description: Id of the my-private-subnet-1
+    Value:
+      Ref: myPrivateSubnet1
+  myPrivateSubnet2Id:
+    Description: Id of the my-private-subnet-2
+    Value:
+      Ref: myPrivateSubnet2
 
 
 
