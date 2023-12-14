@@ -55,6 +55,58 @@ Resources:
         - Key: Name
           Value: my-IG-1
 
+  #attaching vpc to igw
+  VpcToIGW:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId:
+        Ref: myIG1
+      VpcId: 
+        Ref: myVPC
+  
+  #creating route table for public subnet
+  publicSubnetRT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: myVPC
+      Tags:
+        - Key: Name
+          Value: publicSubnetRT
+  # Associating the public subnet to the public route table
+  publicSubnetRTAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: publicSubnetRT
+      SubnetId:
+        Ref: myPublicSubnet1
+
+  #creating route table for private subnet
+  privateSubnetRT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: myVPC
+      Tags:
+        - Key: Name
+          Value: privateSubnetRT
+  privateSubnetRTAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: privateSubnetRT
+      SubnetId:
+        Ref: myPrivateSubnet1
+  privateSubnetRTAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: privateSubnetRT
+      SubnetId:
+        Ref: myPrivateSubnet2
+  
+
   
 Outputs:
   myVPCId:
@@ -74,6 +126,13 @@ Outputs:
     Description: Id of the my-private-subnet-2
     Value:
       Ref: myPrivateSubnet2
+
+  myIG1Id:
+    Description: Id of the Internet Gateway
+    Value:
+      Ref: myIG1
+  
+
 
 
 
