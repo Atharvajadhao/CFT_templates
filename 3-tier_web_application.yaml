@@ -81,6 +81,15 @@ Resources:
         Ref: publicSubnetRT
       SubnetId:
         Ref: myPublicSubnet1
+  #creating route for public subnet to igw
+  routePublicSubnetToIGW:
+    Type: AWS::EC2::Route
+    Properties:
+       RouteTableId:
+         Ref: publicSubnetRT
+       DestinationCidrBlock: 0.0.0.0/0
+       GatewayId:
+         Ref: myIG1
 
   #creating route table for private subnet
   privateSubnetRT:
@@ -128,8 +137,95 @@ Resources:
       DestinationCidrBlock: '0.0.0.0/0'
       NatGatewayId: !Ref NATGateway
 
-    
-    
+  #Security Group for front-end
+  frontEndSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: This is security group create for front end instance
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: frontEndSG-1
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp 
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  
+  #Security Group for back-end
+  backEndSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: This is security group create for backend end instance
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: backEndSG-1
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  # Creating frontend instance
+  frontEndInstance:
+    DependsOn: frontEndSG
+    Type: AWS::EC2::Instance 
+    Properties:
+      ImageId: ami-09d429cdd9cd68510
+      InstanceType: t2.micro
+      KeyName: NewKeyPair
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet:
+            - Ref: frontEndSG
+          SubnetId: !Ref myPublicSubnet1 
+      BlockDeviceMappings:
+        - DeviceName: /dev/sdm
+          Ebs:
+            VolumeType: io1
+            Iops: 200
+            DeleteOnTermination: true
+            VolumeSize: 8
+      Tags:
+        - Key: Name
+          Value: my-frontend-instance
+  
+  #creating backend instance
+  backEndInstance:
+    DependsOn: backEndSG
+    Type: AWS::EC2::Instance 
+    Properties:
+      ImageId: ami-0827bad3f0c2fc7cd
+      InstanceType: t2.micro
+      KeyName: Backend_Instance_Key
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: false
+          DeviceIndex: 0
+          GroupSet: 
+            - Ref: backEndSG
+          SubnetId: !Ref myPrivateSubnet1 
+      BlockDeviceMappings:
+        - DeviceName: /dev/sdm
+          Ebs:
+            VolumeType: io1
+            Iops: 200
+            DeleteOnTermination: true
+            VolumeSize: 8
+      Tags:
+        - Key: Name
+          Value: my-backend-instance
+
+  
 Outputs:
   myVPCId:
     Description: Id of the VPC created
@@ -149,12 +245,18 @@ Outputs:
     Value:
       Ref: myPrivateSubnet2
 
-  myIG1Id:
-    Description: Id of the Internet Gateway
-    Value:
-      Ref: myIG1
-  
+  frontEndSGId:
+    Description: Id of the front end security group
+    Value: !Ref frontEndSG
+  backEndSGId:
+    Description: Id of the front end security group
+    Value: !Ref backEndSG
 
-
+  frontEndInstanceId:
+    Description: Id of the frontend instance
+    Value: !Ref frontEndInstance
+  backEndInstanceId:
+    Description: Id of the backend instance
+    Value: !Ref backEndInstance
 
 
